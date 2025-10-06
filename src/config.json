@@ -1,0 +1,21 @@
+{
+  "enabled_services": [
+    "discord",
+    "youtube",
+    "soundcloud",
+    "spotify",
+    "telegram",
+    "whatsapp",
+    "instagram",
+    "facebook",
+    "twitter",
+    "tiktok",
+    "snapchat",
+    "linkedin",
+    "pinterest",
+    "reddit",
+    "vimeo",
+    "tumblr"
+  ],
+  "external_proxy": "http://your-external-proxy:3128"
+}
