@@ -39,12 +39,6 @@ jobs:
           tag_name: "v${{ github.run_number }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create and push tag
-        run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git tag v${{ github.run_number }}
-          git push origin v${{ github.run_number }}
       - name: Upload installer to Release
         uses: softprops/action-gh-release@v1
         with:
