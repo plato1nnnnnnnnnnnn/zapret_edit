@@ -23,7 +23,7 @@ jobs:
       - name: Build exe
         run: pyinstaller zapret_proxy_simple.spec
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zapret_proxy_dist
           path: dist/
@@ -37,7 +37,7 @@ jobs:
         run: |
           wine "C:\innosetup\ISCC.exe" zapret_proxy_installer.iss
       - name: Upload installer artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zapret_proxy_installer
           path: dist/ZapretProxySetup.exe
@@ -95,12 +95,12 @@ jobs:
       - name: Build exe (Windows)
         run: pyinstaller zapret_proxy_simple.spec
       - name: Upload Windows exe artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zapret_proxy_simple_win
           path: dist/zapret_proxy_simple.exe
       - name: Upload only Windows exe as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zapret_proxy_simple_exe
           path: dist/zapret_proxy_simple.exe
