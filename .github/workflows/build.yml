@@ -1,0 +1,112 @@
+name: Build Zapret Proxy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+      - name: Build exe
+        run: pyinstaller zapret_proxy_simple.spec
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zapret_proxy_dist
+          path: dist/
+      - name: Install wine
+        run: sudo apt-get update && sudo apt-get install -y wine
+      - name: Download Inno Setup
+        run: wget https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe -O innosetup.exe
+      - name: Install Inno Setup (silent)
+        run: wine innosetup.exe /VERYSILENT /DIR=C:\innosetup
+      - name: Build installer with Inno Setup
+        run: |
+          wine "C:\innosetup\ISCC.exe" zapret_proxy_installer.iss
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zapret_proxy_installer
+          path: dist/ZapretProxySetup.exe
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "Release ${{ github.run_number }}"
+          tag_name: "v${{ github.run_number }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload installer to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/ZapretProxySetup.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload exe to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/zapret_proxy_simple.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload config to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: src/config.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload icon to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: icon.ico
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload README to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: README.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+      - name: Build exe (Windows)
+        run: pyinstaller zapret_proxy_simple.spec
+      - name: Upload Windows exe artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zapret_proxy_simple_win
+          path: dist/zapret_proxy_simple.exe
+      - name: Upload only Windows exe as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zapret_proxy_simple_exe
+          path: dist/zapret_proxy_simple.exe
+      - name: Upload Windows exe to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/zapret_proxy_simple.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

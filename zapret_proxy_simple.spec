@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='zapret_proxy_simple',
+    name='zapret_proxy_simple.exe',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
