@@ -5,7 +5,7 @@ a = Analysis(
     ['src/simple_app.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('src/config.json', 'config.json')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

@@ -1,8 +1,24 @@
+
 import json
+import os
+import sys
 from handlers import discord, youtube, soundcloud, spotify
 
-# Загрузка конфигурации
-with open('src/config.json', 'r') as f:
+# Универсальный путь к config.json
+def get_config_path():
+    if getattr(sys, 'frozen', False):
+        # Если запущено из exe
+        base_path = sys._MEIPASS if hasattr(sys, '_MEIPASS') else os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    # Пробуем найти config.json рядом с exe или в src/
+    config_path = os.path.join(base_path, 'config.json')
+    if not os.path.exists(config_path):
+        # fallback: src/config.json относительно текущей рабочей директории
+        config_path = os.path.join(os.getcwd(), 'src', 'config.json')
+    return config_path
+
+with open(get_config_path(), 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 ENABLED_SERVICES = config.get('enabled_services', [])
