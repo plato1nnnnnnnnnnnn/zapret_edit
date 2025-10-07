@@ -7,7 +7,27 @@ from PyQt5.QtWidgets import (
 )
 import os
 
-CONFIG_PATH = 'src/config.json'
+def get_config_path():
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS if hasattr(sys, '_MEIPASS') else os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(base_path, 'config.json')
+    if not os.path.exists(config_path):
+        config_path = os.path.join(os.getcwd(), 'src', 'config.json')
+    return config_path
+
+def ensure_config_exists(path):
+    if not os.path.exists(path):
+        default_config = {
+            "enabled_services": ["discord", "youtube", "soundcloud", "spotify"],
+            "external_proxy": ""
+        }
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(default_config, f, indent=2)
+
+CONFIG_PATH = get_config_path()
+ensure_config_exists(CONFIG_PATH)
 SERVICES = [
     "discord", "youtube", "soundcloud", "spotify", "telegram", "whatsapp",
     "instagram", "facebook", "twitter", "tiktok", "snapchat", "linkedin",

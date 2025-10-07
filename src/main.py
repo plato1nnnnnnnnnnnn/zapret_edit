@@ -5,20 +5,29 @@ import sys
 from handlers import discord, youtube, soundcloud, spotify
 
 # Универсальный путь к config.json
+
 def get_config_path():
     if getattr(sys, 'frozen', False):
-        # Если запущено из exe
         base_path = sys._MEIPASS if hasattr(sys, '_MEIPASS') else os.path.dirname(sys.executable)
     else:
         base_path = os.path.dirname(os.path.abspath(__file__))
-    # Пробуем найти config.json рядом с exe или в src/
     config_path = os.path.join(base_path, 'config.json')
     if not os.path.exists(config_path):
-        # fallback: src/config.json относительно текущей рабочей директории
         config_path = os.path.join(os.getcwd(), 'src', 'config.json')
     return config_path
 
-with open(get_config_path(), 'r', encoding='utf-8') as f:
+def ensure_config_exists(path):
+    if not os.path.exists(path):
+        default_config = {
+            "enabled_services": ["discord", "youtube", "soundcloud", "spotify"],
+            "external_proxy": ""
+        }
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(default_config, f, indent=2)
+
+CONFIG_PATH = get_config_path()
+ensure_config_exists(CONFIG_PATH)
+with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 ENABLED_SERVICES = config.get('enabled_services', [])
